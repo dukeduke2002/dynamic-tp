@@ -37,6 +37,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 
 /**
  * DtpAdapterListener related
+ * 这也是一个比较关键的类，实现了GenericApplicationListener接口，算是一个事件监听器，主要监听RefreshEvent、CollectEvent、AlarmCheckEvent这三个事件。
  *
  * @author yanhom
  * @since 1.0.6
@@ -55,9 +56,16 @@ public class DtpAdapterListener implements GenericApplicationListener {
         return false;
     }
 
+    /**
+     * 这里就是集中处理所有框架产生的事件了，我们先来看看事件都是在什么时机发布的。
+     * @param event
+     */
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         try {
+            // 还记得我们在我们的应用中引入了dynamic-tp-spring-boot-starter-nacos这个starter么，
+            // 在这个starter中有个自动装配类:DtpAutoConfiguration,
+            // 在这个配置类中初始化了唯一的bean就是NacosRefresher，它负责配置更新时的刷新。
             if (event instanceof RefreshEvent) {
                 doRefresh(((RefreshEvent) event).getDtpProperties());
             } else if (event instanceof CollectEvent) {

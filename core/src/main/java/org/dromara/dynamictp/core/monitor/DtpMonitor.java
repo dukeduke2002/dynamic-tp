@@ -41,7 +41,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 
 /**
  * DtpMonitor related
- *
+ * 顾名思义，就是用来进行监控的类，里面就是一些跟告警相关的逻辑，本身也实现了ApplicationRunner接口，因此其run方法也是我们重点要来看的。
  * @author yanhom
  * @since 1.0.0
  **/

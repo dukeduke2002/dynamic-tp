@@ -57,6 +57,7 @@ import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGra
 
 /**
  * BeanPostProcessor that handles all related beans managed by Spring.
+ * 这个类是真正拦截我们的线程池对象的一个bean的后处理器，它是关键
  *
  * @author yanhom
  * @since 1.0.0
@@ -82,11 +83,20 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         return bean;
     }
 
+    /**
+     * 这个类对我们应用中定义的线程池进行拦截，并填充相关的map，以实现一些增强逻辑
+     * @param bean
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        //如果bean不是ThreadPoolExecutor或者ThreadPoolTaskExecutor，那么就不对bean做任何处理，直接返回
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
+        //如果bean是DtpExecutor,调用registerDtp方法填充DTP_REGISTRY这个map
         if (bean instanceof DtpExecutor) {
             return registerAndReturnDtp(bean);
         }
@@ -111,6 +121,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     private Object registerAndReturnCommon(Object bean, String beanName) {
         String dtpAnnoValue;
         try {
+            //如果bean上有DynamicTp注解
             DynamicTp dynamicTp = beanFactory.findAnnotationOnBean(beanName, DynamicTp.class);
             if (Objects.nonNull(dynamicTp)) {
                 dtpAnnoValue = dynamicTp.value();
@@ -133,6 +144,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             log.warn("There is no bean with the given name {}", beanName, e);
             return bean;
         }
+        //如果说bean上面的DynamicTp注解，使用注解的值作为线程池的名称，没有的话就使用bean的名称
         String poolName = StringUtils.isNotBlank(dtpAnnoValue) ? dtpAnnoValue : beanName;
         return doRegisterAndReturnCommon(bean, poolName);
     }

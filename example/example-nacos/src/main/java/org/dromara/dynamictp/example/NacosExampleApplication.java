@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author Redick01
  */
+// 接入步骤3： 启动类加 @EnableDynamicTp 注解
 @EnableDynamicTp
 @SpringBootApplication
 public class NacosExampleApplication {

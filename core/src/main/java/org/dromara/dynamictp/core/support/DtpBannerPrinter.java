@@ -25,6 +25,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * DtpBannerPrinter related
+ * 这个类本身跟我们的组件没有关系，就是个打印banner的类
  *
  * @author yanhom
  * @since 1.0.0

@@ -64,15 +64,18 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {
-
+        //如果更新的内容为空或者文件类型为空，则直接返回
         if (StringUtils.isBlank(content) || Objects.isNull(fileType)) {
             log.warn("DynamicTp refresh, empty content or null fileType.");
             return;
         }
 
         try {
+            //获取到配置文件处理器，这里面维护了多重格式的文件解析器：比如properties、yaml以及json格式的解析器
             val configHandler = ConfigHandler.getInstance();
+            //将配置文件解析为properties格式的数据
             val properties = configHandler.parseConfig(content, fileType);
+            //当有配置变化的时候，执行刷新
             refresh(properties);
         } catch (IOException e) {
             log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileType, e);
@@ -84,7 +87,9 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
             log.warn("DynamicTp refresh, empty properties.");
             return;
         }
+        //这一步很关键，将发生变化的属性绑定到DtpProperties对象上
         BinderHelper.bindDtpProperties(properties, dtpProperties);
+        //使用更新后的DtpProperties相关属性去更新线程池属性
         doRefresh(dtpProperties);
     }
 

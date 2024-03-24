@@ -41,6 +41,7 @@
             <artifactId>nacos-client</artifactId>
             <version>1.4.6</version>
         </dependency>
+<!--        接入步骤1：引入相应配置中心的依赖 maven 依赖-->
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>

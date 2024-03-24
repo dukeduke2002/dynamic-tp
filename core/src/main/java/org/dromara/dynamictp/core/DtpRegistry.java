@@ -59,6 +59,9 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CH
 
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
+ * 这个类也是比较关键的，看他的命名应该是跟配置中心有关系的，这个类也是比较重要的，
+ * 它实现了ApplicationRunner接口，所以说它在我们的应用一启动的时候就会执行run方法，
+ * 该类保存着所有已经注册的线程池对象。我们重点来看run方法。
  *
  * @author yanhom
  * @since 1.0.0
@@ -162,15 +165,19 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
      * @param dtpProperties the main properties that maintain by config center
      */
     public static void refresh(DtpProperties dtpProperties) {
+        //属性为空，直接返回
         if (Objects.isNull(dtpProperties) || CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
             log.debug("DynamicTp refresh, empty thread pool properties.");
             return;
         }
+        //从属性中拿到所有的线程池属性配置
         dtpProperties.getExecutors().forEach(p -> {
+            //如果线程池名称为空直接返回
             if (StringUtils.isBlank(p.getThreadPoolName())) {
                 log.warn("DynamicTp refresh, thread pool name must not be blank, executorProps: {}", p);
                 return;
             }
+            //从注册的线程池中拿到对应的线程池对象
             ExecutorWrapper executorWrapper = EXECUTOR_REGISTRY.get(p.getThreadPoolName());
             if (Objects.nonNull(executorWrapper)) {
                 refresh(executorWrapper, p);
@@ -330,12 +337,16 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     @Override
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
         Set<String> remoteExecutors = Collections.emptySet();
+        //我们在配置文件里面配置的线程池
         if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
+            //保存远程线程池的名称
             remoteExecutors = dtpProperties.getExecutors().stream()
                     .map(DtpExecutorProps::getThreadPoolName)
                     .collect(Collectors.toSet());
         }
+        //DTP_REGISTRY这个map保存已经注册的线程池
         val registeredExecutors = Sets.newHashSet(EXECUTOR_REGISTRY.keySet());
+
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);

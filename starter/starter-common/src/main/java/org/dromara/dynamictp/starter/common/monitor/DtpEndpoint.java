@@ -35,6 +35,7 @@ import java.util.List;
 
 /**
  * DtpEndpoint related
+ * 这个就是基于sringboot-actuator来实现的一个端点，我们可以调用http://localhost:8888/dynamic-tp/actuator/dynamic-tp来获取一些指标数据，里面的逻辑我们来看。
  *
  * @author yanhom
  * @since 1.0.0

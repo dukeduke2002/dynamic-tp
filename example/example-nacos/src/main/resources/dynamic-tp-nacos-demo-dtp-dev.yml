@@ -1,8 +1,9 @@
 # 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
+# 接入步骤2：配置中心配置线程池实例 配置文件
 spring:
   dynamic:
     tp:
-      enabled: true
+      enabled: true                  # 是否启用 dynamictp，默认true
       enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: micrometer,logging,endpoint     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
